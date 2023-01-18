@@ -1,6 +1,7 @@
 package com.example.medicinereminder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -25,20 +26,25 @@ public class AddActivity extends AppCompatActivity implements AddTreatmentFragme
         getSupportActionBar().setTitle("add new treatment");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+if(savedInstanceState==null)
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.add_medication_container,new AddTreatmentFragment()).commit();
+                .add(R.id.add_medication_container,new AddTreatmentFragment(),AddTreatmentFragment.class.getSimpleName()).commit();
     }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
     @Override
     public void onBackPressed() {
-        finish();
-        super.onBackPressed();
+        //super.onBackPressed();
+        Fragment doseFragment=getSupportFragmentManager().findFragmentByTag(DoseSetupFragment.class.getSimpleName());
+        if(doseFragment!=null&&doseFragment.isVisible()){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.add_medication_container,new AddTreatmentFragment(),AddTreatmentFragment.class.getSimpleName()).commit();
+        }else {finish();}
     }
 //next button interface callback method implementation
     @Override
     public void OnNextButtonClick() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.add_medication_container,doseSetupFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.add_medication_container,doseSetupFragment,DoseSetupFragment.class.getSimpleName()).commit();
     }
 // set callback from TimePickerDialog.OnTimeSetListener interface
     @Override

@@ -2,6 +2,7 @@ package com.example.medicinereminder;
 
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.medicinereminder.database.Medicine;
 import com.example.medicinereminder.extras.DatePickerFragment;
 import com.example.medicinereminder.extras.TimePickerFragment;
+import com.example.medicinereminder.viewmodels.AddViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +32,9 @@ public class DoseSetupFragment extends Fragment  {
     int numOfDoses;
     String repetitionTime;
     int doseAmount;
+    private AddViewModel addViewModel;
+
+    private Medicine userMedicine;
 
    /*------------------------------------------------------------------------------------------------------------------*/
     @Nullable
@@ -75,14 +83,22 @@ public class DoseSetupFragment extends Fragment  {
         //set the alarm manager and insert in data base
     }
 
-    public void setDoseData(String name,String type,int numOfDoses,String repetitionTime,int DoseAmount){
-        this.medicineName=name;
-        this.type=type;
-       this. numOfDoses=numOfDoses;
-       this.repetitionTime=repetitionTime;
-       this.doseAmount=DoseAmount;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        addViewModel= ViewModelProviders.of(getActivity()).get(AddViewModel.class);
+        addViewModel.getUserTreatment().observe(getViewLifecycleOwner(), new Observer<Medicine>() {
+            @Override
+            public void onChanged(Medicine medicine) {
+
+                Log.d(DoseSetupFragment.class.getSimpleName(), "DoseSetup Fragment onChanged: update medicine user input ******* ");
+                Log.d(DoseSetupFragment.class.getSimpleName(), medicine.getTreatmentName());
+                userMedicine=medicine;
+
+            }
+        });
+
 
     }
-
-
 }

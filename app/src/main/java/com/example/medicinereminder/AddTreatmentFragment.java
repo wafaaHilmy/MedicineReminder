@@ -19,6 +19,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.example.medicinereminder.database.Medicine;
+import com.example.medicinereminder.viewmodels.AddViewModel;
+
+import java.util.Arrays;
 
 public class AddTreatmentFragment extends Fragment {
 
@@ -28,6 +37,8 @@ public class AddTreatmentFragment extends Fragment {
     private Spinner repetitionSpinner;
     private Spinner doseAmountSpinner;
     private TextView summaryTextView;
+
+    private AddViewModel addViewModel;
 
     String medicineName="";
     String type;
@@ -69,29 +80,17 @@ public class AddTreatmentFragment extends Fragment {
        nextButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-
+               //call function of interface buttonClickListener to transfer to another fragment
                buttonClickListener.OnNextButtonClick();
+
+               //set Medicine object data and save it in addViewModel
+               Medicine userTreatmentInput=new Medicine(medicineName,type,numOfDose,repetitionTime,doseAmount);
+              addViewModel.setUserTreatment(userTreatmentInput);
+
+
            }
        });
 
-/*
-        ArrayAdapter<String> typeArrayAdapter=new ArrayAdapter<>(getContext()
-                , android.R.layout.simple_spinner_dropdown_item ,getResources().getStringArray(R.array.medication_type));
-        typeSpinner.setAdapter(typeArrayAdapter);
-
-       ArrayAdapter<String> numOfDoseArrayAdapter=new ArrayAdapter<>(getContext()
-                , android.R.layout.simple_spinner_dropdown_item ,getResources().getStringArray(R.array.medication_dose));
-       numOfDosesSpinner.setAdapter(numOfDoseArrayAdapter);
-
-
-        ArrayAdapter<String> repetitionArrayAdapter=new ArrayAdapter<>(getContext()
-                , android.R.layout.simple_spinner_dropdown_item ,getResources().getStringArray(R.array.repetition_time));
-        repetitionSpinner.setAdapter(repetitionArrayAdapter);
-
-        ArrayAdapter<String> doseAmountArrayAdapter=new ArrayAdapter<>(getContext()
-                , android.R.layout.simple_spinner_dropdown_item ,getResources().getStringArray(R.array.medication_amount));
-        doseAmountSpinner.setAdapter(doseAmountArrayAdapter);
-*/
 
      medicineNameEditText.addTextChangedListener(new TextWatcher() {
          @Override
@@ -120,7 +119,8 @@ public class AddTreatmentFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                type=adapterView.getItemAtPosition(0).toString();
+              if(savedInstanceState!=null)
+               type=adapterView.getItemAtPosition(0).toString();
             }
         });
 
@@ -179,5 +179,41 @@ private void SetSummaryTextView(){
             summaryTextView.setText(summary);}
 }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        addViewModel= ViewModelProviders.of(getActivity()).get(AddViewModel.class);
+        addViewModel.getUserTreatment().observe(getViewLifecycleOwner(), new Observer<Medicine>() {
+            @Override
+            public void onChanged(Medicine medicine) {
+                medicineName=medicine.getTreatmentName();
+                medicineNameEditText.setText(medicineName);
+                type=medicine.getType();
+                typeSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.medication_type)).indexOf(type));
+                numOfDose=medicine.getDoseNumber();
+                numOfDosesSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.medication_dose)).indexOf(String.valueOf(numOfDose)));
+                repetitionTime=medicine.getRepetitionTime();
+               repetitionSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.repetition_time)).indexOf(repetitionTime));
+                doseAmount=medicine.getDoseAmount();
+                doseAmountSpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.medication_amount)).indexOf(String.valueOf(doseAmount)));
+
+                SetSummaryTextView();
+
+            }
+        });
+    }
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
