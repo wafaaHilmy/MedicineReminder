@@ -84,7 +84,7 @@ public class AddTreatmentFragment extends Fragment {
                buttonClickListener.OnNextButtonClick();
 
                //set Medicine object data and save it in addViewModel
-               Medicine userTreatmentInput=new Medicine(medicineName,type,numOfDose,repetitionTime,doseAmount);
+               Medicine userTreatmentInput=new Medicine(getContext(),medicineName,type,numOfDose,repetitionTime,doseAmount);
               addViewModel.setUserTreatment(userTreatmentInput);
 
 
@@ -178,6 +178,7 @@ private void SetSummaryTextView(){
                     medicineName,doseAmount,type,numOfDose,repetitionTime);
             summaryTextView.setText(summary);}
 }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

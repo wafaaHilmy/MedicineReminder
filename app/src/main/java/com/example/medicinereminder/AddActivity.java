@@ -51,7 +51,7 @@ if(savedInstanceState==null)
     public void onTimeSet(TimePicker timePicker, int hour, int minutes) {
         calender.set(Calendar.HOUR,hour);
        calender.set(Calendar.MINUTE,minutes);
-        doseSetupFragment.setTimepickerTv(DateFormat.format("hh:mm aa",calender.getTime()));
+        doseSetupFragment.setTimepickerTv(calender.getTime());
     }
 
 
@@ -61,8 +61,7 @@ if(savedInstanceState==null)
         calender.set(Calendar.YEAR,year);
         calender.set(Calendar.MONTH,month);
         calender.set(Calendar.DAY_OF_MONTH,dayOfMonth);
-
-     CharSequence dateFormat= DateFormat.format("dd MMM yyyy",calender.getTime());
-     doseSetupFragment.setDatePickerTv(dateFormat);
+        //send date
+     doseSetupFragment.setDatePickerTv(calender.getTime());
     }
 }
